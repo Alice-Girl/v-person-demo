@@ -1,42 +1,27 @@
 <script setup>
-import { ref, reactive, getCurrentInstance, onMounted } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import * as echarts from "echarts";
 
-// proxy相当于组件对象   //getCurrentInstance它的作用是获取当前组件的实例对象
-const { proxy } = getCurrentInstance()
-
-// const tableData = ref([])
-// const tableLabel = ref({
-//     name: "课程",
-//     todayBuy: "今日购买",
-//     monthBuy: "本月购买",
-//     totalBuy: "总购买",
-// })
 
 const getImageUrl = (user) => {
   return new URL(`../assets/images/${user}.png`, import.meta.url).href 
 }
 
-// const getTableData = async() => {
-//   const data = await proxy.$api.getTableData()
-//   tableData.value = data.tableData
-//   // axios({
-//   //   url: `/api/home/getTableData`,
-//   //   method: 'get',
-//   // }).then(res => {
-//   //   console.log(res, 'res')
-//   //   if(res.status === 200) {
-//   //     tableData.value = res.data.data.tableData
-//   //   }
-//   // })
-// }
-
-//卡片
-const countData = ref([])
-const getCountData = async() => {
-  const data = await proxy.$api.getCountData()
-  countData.value = data
-}
+const txtList = reactive([
+  '1.熟技术基础：具备扎实的H5、CSS3、TS、JS、ES6等混合开发等 ',
+  '2.框架应用：Vue框架及其相关技术栈（如：Vue2/3、router、Vuex/Pinia等）、uniapp、小程序等混合开发 ',
+  '3.熟练掌握数据可视化：Echarts、Hightcharts 等数据可视化研发',
+  '4. 熟练掌握构建⼯具：npm、yarn、pnpm、nrm',
+  '5.熟练掌握⽹络通信机制：ajax、axios、http、https等 ',
+  '6.熟练掌握CSS预编译：Less、Sass、Stylus 等',
+  '7.性能优化：前端页面优化、交互体验、提升页面加载速度和响应速度等',
+  '8.熟练掌握CICD部署打包等 ',
+  '9.熟练掌握前端主流UI组件库：Element UI、Element Plus、Vant4、iView、Bootstrap等',
+  '10.熟练掌握动画库：Animate、Hover Css、swiper 等',
+  '11.熟练掌握HTTP协议，熟悉浏览器缓存策略、前后端分离的开发模式等',
+  '12.熟悉前端常用的构建工具：熟练掌握Webpack、Vite、Gulp ',
+  '13.AI工具：熟练使用豆包、Deepseek等AI辅助工具'
+])
 
 //echart 配置： 折线图和柱状图 两个图表共用的公共配置
 const xOptions = reactive({
@@ -159,6 +144,58 @@ const getChartData = async() => {
   }
 }
 
+const countData = reactive([
+  {
+    name: '太保消保项目（短期保险）',
+    type: 'vue3技术生态+Andesign+TS'
+  },
+  {
+    name: '信创交易客户端 （银行）',
+    type: 'Vue2技术生态+Element UI+JS等'
+  },
+  {
+    name: '在贴现综服 客户端 （银行）',
+    type: 'Vue3技术生态+TS等'
+  },
+  {
+    name: 'hyMobileUI组件库',
+    type: 'Vue3技术生态+Vant+hyMobileUI等'
+  },
+   {
+    name: '移动端标准脚手架模版',
+    type: 'Vue3技术生态+Vant+hyMobileUI等'
+  },
+  {
+    name: '码动未来',
+    type: 'Vue3技术生态+hyMobileUI+Echarts等'
+  },
+  {
+    name: '移动端标准框架模版',
+    type: 'Vue3技术生态+hyMobileUI+Echarts等'
+  },
+  {
+    name: 'RatelData 数据系统开发',
+    type: 'Vue3技术生态+Element Plus等'
+  },
+  {
+    name: 'Sass 后台管理系统',
+    type: 'Vue2技术生态+element UI等'
+  },
+  {
+    name: '产险2018版数据质量管控',
+    type: 'Vue2技术生态+element UI等'
+  },
+  {
+    name: '风险30指控（保险）',
+    type: 'Vue2技术生态+Vant等'
+  },
+  {
+    name: '掌上大师',
+    type: 'Vue2技术生态+Vant等等'
+  },
+  
+])
+
 onMounted(() => {
 })
 
@@ -167,7 +204,7 @@ onMounted(() => {
 <template>
   <el-row class="home" :gutter="20">
     <el-col :span="8">
-       <el-card shadow="hover">
+       <el-card shadow="hover" >
         <div class="user">
           <img :src="getImageUrl('user')" class="user" />
           <div class="user-info">
@@ -181,37 +218,42 @@ onMounted(() => {
         </div>
       </el-card>
 
-       <el-card shadow="hover" class="user-table">
-        列表
+       <el-card shadow="hover" class="user-list">
+        <template #header>技能列表及优势</template>
+        <ul class="li-suqare">
+          <li v-for="(txt, index) in txtList" :key="index" >{{ txt }}</li>
+        </ul>
+
        </el-card>
     </el-col>
     <el-col :span="16">
-      <div class="num">
-        <el-card
-          :body-style="{display: 'flex', padding: 0}"
-          v-for="item in countData "
-          :key="item.name"
-          >
-            <component :is="item.icon" class="icons" :style="{background: item.color}"></component>
-            <div class="detail">
-              <p class="num">¥  {{ item.value }}</p>
-              <p class="txt">{{ item.name }}</p>
-            </div>
-        </el-card>
+     <div class="num">
+      <el-card
+        :body-style="{display: 'flex', padding: 0}"
+        v-for="item in countData "
+        :key="item.name"
+        >
+          <div class="detail">
+            <p class="num">项目名称：  {{ item.name }}</p>
+            <p class="txt">技术栈：
+              <el-text class="mx-1" type="primary">{{ item.type }}</el-text>
+            </p>
+          </div>
+      </el-card>
       </div>
 
-      <el-card class="top-echart">
+      <!-- <el-card class="top-echart">
         <div ref="echart" style="height: 280px;"></div>
-      </el-card>
+      </el-card> -->
 
-      <div class="graph">
+      <!-- <div class="graph">
         <el-card>
           <div ref="userEchart" style="height: 240px;"></div>
         </el-card>
         <el-card>
           <div ref="videoEchart" style="height: 240px;"></div>
         </el-card>
-      </div>
+      </div> -->
     </el-col>
   </el-row>
 </template> 
@@ -243,7 +285,14 @@ onMounted(() => {
       }
     }
   }
-
+  :deep(.el-card__body ul){
+    li{
+      display: flex;
+      align-items: center;
+      list-style-type: square!important;
+      line-height: 36px;
+    }
+  }
   .login-info{
     p {
       line-height: 30px;
@@ -255,32 +304,36 @@ onMounted(() => {
       }
     }
   }
-  .user-table{
-    margin-top: 20px;
-
+  .li-suqare li{
+    list-style-type: square!important;
   }
+  .user-list ul{
+    margin: 10px 0;
+    height: 100%;
+     li{
+      display: flex;
+      align-items: center;
+      list-style-type: square!important;
+      line-height: 36px;
+    }
+  }
+
   .num{
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     .el-card {
       width: 32%;
+      padding: 15px 0;
+
       margin-bottom: 20px;
-      .icons{
-        width: 80px;
-        height: 80px;
-        font-size: 30px;
-        text-align: center;
-        line-height: 80px;
-        color: #fff;
-      }
       .detail {
+        padding: 15px;
         margin-left: 15px;
         display: flex;
         flex-direction: column;
-        justify-content: center;
         .num {
-          font-size: 30px;     
+          font-size: 14px;     
           margin-bottom: 10px;
         }
         .txt{
@@ -290,16 +343,16 @@ onMounted(() => {
         }
       }
     }
-    
   }
-  .graph {
-    margin-top: 20px;
-    display: flex;
-    justify-content: space-between;
-    .el-card {
-      width: 48%;
-      height: 260px;
-    }
-  }
+
+  // .graph {
+  //   margin-top: 20px;
+  //   display: flex;
+  //   justify-content: space-between;
+  //   .el-card {
+  //     width: 48%;
+  //     height: 260px;
+  //   }
+  // }
 }
 </style>
