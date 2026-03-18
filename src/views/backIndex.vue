@@ -1,38 +1,153 @@
 <script setup>
-import { ref, reactive,  onMounted,  } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
+import * as echarts from "echarts";
+
 
 const getImageUrl = (user) => {
   return new URL(`../assets/images/${user}.png`, import.meta.url).href 
 }
 
 const txtList = reactive([
-  { id: 1, descript: '1.熟技术基础：具备扎实的H5、CSS3、TS、JS、ES6等混合开发等'},
-  { id: 2, descript: '2.框架应用：Vue框架及其相关技术栈（如：Vue2/3、router、Vuex/Pinia等）、uniapp、小程序等混合开发 '},
-  { id: 3, descript: '3.熟练掌握数据可视化：Echarts、Hightcharts 等数据可视化研发'},
-  { id: 4, descript: '4. 熟练掌握构建⼯具：npm、yarn、pnpm、nrm'},
-  { id: 5, descript: '5.熟练掌握⽹络通信机制：ajax、axios、http、https等'},
-  { id: 6, descript: '6.熟练掌握CSS预编译：Less、Sass、Stylus 等'},
-  { id: 7, descript: '7.性能优化：前端页面优化、交互体验、提升页面加载速度和响应速度等'},
-  { id: 8, descript: '8.熟练掌握CICD部署打包等'},
-  { id: 9, descript: '9.熟练掌握前端主流UI组件库：Element UI、Element Plus、Vant4、iView、Bootstrap等'},
-  { id: 10, descript: '10.熟练掌握动画库：Animate、Hover Css、swiper 等'},
-  { id: 11, descript: '11.熟练掌握HTTP协议，熟悉浏览器缓存策略、前后端分离的开发模式等'},
-  { id: 12, descript: '12.熟悉前端常用的构建工具：熟练掌握Webpack、Vite、Gulp'},
-  { id: 13, descript: '13.AI工具：熟练使用豆包、Deepseek等AI辅助工具'}
+  '1.熟技术基础：具备扎实的H5、CSS3、TS、JS、ES6等混合开发等 ',
+  '2.框架应用：Vue框架及其相关技术栈（如：Vue2/3、router、Vuex/Pinia等）、uniapp、小程序等混合开发 ',
+  '3.熟练掌握数据可视化：Echarts、Hightcharts 等数据可视化研发',
+  '4. 熟练掌握构建⼯具：npm、yarn、pnpm、nrm',
+  '5.熟练掌握⽹络通信机制：ajax、axios、http、https等 ',
+  '6.熟练掌握CSS预编译：Less、Sass、Stylus 等',
+  '7.性能优化：前端页面优化、交互体验、提升页面加载速度和响应速度等',
+  '8.熟练掌握CICD部署打包等 ',
+  '9.熟练掌握前端主流UI组件库：Element UI、Element Plus、Vant4、iView、Bootstrap等',
+  '10.熟练掌握动画库：Animate、Hover Css、swiper 等',
+  '11.熟练掌握HTTP协议，熟悉浏览器缓存策略、前后端分离的开发模式等',
+  '12.熟悉前端常用的构建工具：熟练掌握Webpack、Vite、Gulp ',
+  '13.AI工具：熟练使用豆包、Deepseek等AI辅助工具'
 ])
+
+//echart 配置： 折线图和柱状图 两个图表共用的公共配置
+const xOptions = reactive({
+  // 图例文字颜色
+  textStyle: {
+    color: "#333",
+  },
+  legend: {},
+  grid: {
+    left: "20%",
+  },
+  // 提示框
+  tooltip: {
+    trigger: "axis",
+  },
+  xAxis: {
+    type: "category", // 类目轴
+    data: [],
+    axisLine: {
+      lineStyle: {
+        color: "#17b3a3",
+      },
+    },
+    axisLabel: {
+      interval: 0,
+      color: "#333",
+    },
+  },
+  yAxis: [
+    {
+      type: "value",
+      axisLine: {
+        lineStyle: {
+          color: "#17b3a3",
+        },
+      },
+    },
+  ],
+      color: ["#2ec7c9", "#b6a2de", "#5ab1ef", "#ffb980", "#d87a80", "#8d98b3"],
+      series: [],
+})
+
+const pieOptions = reactive({
+  tooltip: {
+    trigger: "item",
+  },
+  legend: {},
+  color: [
+    "#0f78f4",
+    "#dd536b",
+    "#9462e5",
+    "#a6a6a6",
+    "#e1bb22",
+    "#39c362",
+    "#3ed1cf",
+  ],
+  series: []
+})
+
+//observer 接收观察器实例对象
+const observer = ref(null)
+
+// echart
+// const chartData = ref([])
+const getChartData = async() => {
+  const { orderData, userData, videoData } = await proxy.$api.getChartData()
+  // 第一个图标的下 series 赋值
+  // const oneEchart = echarts.init(proxy.$refs['echart'])
+  xOptions.xAxis.data=orderData.date
+  xOptions.series = Object.keys(orderData.data[0]).map(val=>({
+      name:val,
+      data:orderData.data.map(item=>item[val]),
+      type: "line"
+    })
+  )
+  //echarts.init方法初始化ECharts实例，需要传入dom对象
+  const OneEcharts = echarts.init(proxy.$refs["echart"])
+  //setOption方法应用配置对象
+  OneEcharts.setOption(xOptions)
+
+  //对第二个图表的xAxis和series赋值
+  xOptions.xAxis.data = userData.map((item) => item.date)
+  xOptions.series = [
+    {
+      name: "新增用户",
+      data: userData.map((item) => item.new),
+      type: "bar",
+    },
+    {
+      name: "活跃用户",
+      data: userData.map((item) => item.active),
+      type: "bar",
+    }
+  ]
+ //two
+  const TwoEcharts = echarts.init(proxy.$refs["userEchart"])
+  TwoEcharts.setOption(xOptions)
+
+  // 饼图渲染
+  pieOptions.series = [
+    {
+      data: videoData,
+      type: "pie",
+    },
+  ]
+  //three
+  const ThreeEcharts = echarts.init(proxy.$refs["videoEchart"])
+  ThreeEcharts.setOption(pieOptions);
+
+  //ResizeObserver 如果监视的容器大小变化，如果改变会执行传递的回调
+  observer.value = new  ((entries) => {
+    OneEcharts.resize()
+    TwoEcharts.resize()
+    ThreeEcharts.resize()
+  })
+
+  // 容器如果存在
+  if(proxy.$refs['echart']) {
+    observer.value.observer(proxy.$refs['echart'])
+  }
+}
 
 const countData = reactive([
   {
     name: '太保消保项目（短期保险）',
-    type: 'vue3技术生态+Andesign+TS',
-    list: [
-      '1.独立设计并实现复杂的前端交互，理解交互设计原则，具备良好的代码建设、规范意识、问题排查能力及团对协作能力。',
-      '2.独立承担Vue3消保项目消保收集-部门审核模块功能模块的研发。',
-      '3.独立承担【消保项目】-队伍管理模块，用户新增模块的研发。',
-      '4.独立承担【消保项目】-队伍管理模块，变更申请模块的研发。',
-      '5.独立承担【消保项目】-消保审查模块，消保部门审核模块的研发。',
-      '6. 具备良好的沟通能力及团对合作能力，处理数据展示与交互、责任心强'
-    ]
+    type: 'vue3技术生态+Andesign+TS'
   },
   {
     name: '信创交易客户端 （银行）',
@@ -81,21 +196,6 @@ const countData = reactive([
   
 ])
 
-const detailVisible = ref(true)
-
-const detailData = ref(null)
-
-const handleDetail = (val) => {
-  console.log(typeof val, '--typeof---')
-  detailVisible.value = true
-  detailData.value = val
-  console.log(typeof detailData, '=obj===')
-
-}
-
-const handleClose = () => {
-  detailVisible.value = false
-}
 onMounted(() => {
 })
 
@@ -104,17 +204,12 @@ onMounted(() => {
 <template>
   <el-row class="home" :gutter="20">
     <el-col :span="8">
-       <el-card shadow="hover">
+       <el-card shadow="hover" >
         <div class="user">
           <img :src="getImageUrl('user')" class="user" />
           <div class="user-info">
-            <p class="user-info-admin">刘周杰</p>
-            <div class="user-info-txt">
-              <p class="user-info-p">岗位：前端开发</p>
-              <p class="user-info-p">性别：女</p>
-              <p class="user-info-p">居住地：上海松江九亭</p>
-
-            </div>
+            <p class="user-info-admin ">刘周杰</p>
+            <p class="user-info-p">前端开发</p>
           </div>
         </div>
         <div class="login-info">
@@ -126,7 +221,7 @@ onMounted(() => {
        <el-card shadow="hover" class="user-list">
         <template #header>技能列表及优势</template>
         <ul class="li-suqare">
-          <li v-for="(txt, index) in txtList" :key="txt.id" >{{ txt.descript }}</li>
+          <li v-for="(txt, index) in txtList" :key="index" >{{ txt }}</li>
         </ul>
 
        </el-card>
@@ -137,7 +232,6 @@ onMounted(() => {
         :body-style="{display: 'flex', padding: 0}"
         v-for="item in countData "
         :key="item.name"
-        @click="handleDetail(item)"
         >
           <div class="detail">
             <p class="num">项目名称：  {{ item.name }}</p>
@@ -162,7 +256,9 @@ onMounted(() => {
       </div> -->
     </el-col>
   </el-row>
-  <card-detail v-model:visible="detailVisible" :detailData=detailData @close="handleClose"></card-detail>
+
+
+  <card-detail ></card-detail>
 </template> 
 
 <style lang="less" scoped>
@@ -181,9 +277,6 @@ onMounted(() => {
       margin-right: 40px;
     }
     .user-info{
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
       p{
           line-height: 40px;
         }
@@ -191,11 +284,7 @@ onMounted(() => {
         color: #999;
       }
       .user-info-admin{
-        font-size: 38px;
-        margin-right: 30px;
-      }
-      .user-info-txt{
-        font-size: 16px;
+        font-size: 35px;
       }
     }
   }
@@ -239,7 +328,7 @@ onMounted(() => {
     .el-card {
       width: 32%;
       padding: 15px 0;
-      cursor: pointer;
+
       margin-bottom: 20px;
       .detail {
         padding: 15px;
