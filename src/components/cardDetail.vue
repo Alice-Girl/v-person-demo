@@ -2,14 +2,14 @@
   <el-dialog 
     v-model="dialogVisible" 
     title="详细信息" 
-    width="600px"
+    width="700px"
     center
     :close-on-click-modal="false"
     destroy-on-close
     @close="handleClose"
     class="detailPage"
   >
-    <div v-if="detailData">
+    <div v-if="detailData" class="detail-title">
       <h3>项目名称：{{ detailData.name }}</h3>
       <h3>技术栈：{{ detailData.type }}</h3>
       <div class="detail-list">
@@ -54,8 +54,16 @@ const dialogVisible = computed({
 <style lang="less" scoped>
 .detailPage{
   overflow: hidden;
-  .detailPage {
-    
+  .detail-title {
+    h3 {
+      font-size: 24px;
+      line-height: 30px;
+    }
+    .detail-list{
+      margin: 10px 0;
+      font-size: 18px;
+      line-height: 30px;
+    }
   }
 }
 </style>
