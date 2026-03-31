@@ -5,7 +5,7 @@
         <component class="icons" is="menu"></component>
       </el-button>
       <el-breadcrumb separator="/">
-        <el-breadcrumb-item :to="{ path: '/' }">个人信息</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/' }" :style="{ color: '#fff' }" >个人信息</el-breadcrumb-item>
         </el-breadcrumb>
     </div>
     <div class="r-content">
