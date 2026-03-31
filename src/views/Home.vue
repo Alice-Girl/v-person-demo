@@ -18,7 +18,8 @@ const txtList = reactive([
   { id: 10, descript: '10.熟练掌握动画库：Animate、Hover Css、swiper 等'},
   { id: 11, descript: '11.熟练掌握HTTP协议，熟悉浏览器缓存策略、前后端分离的开发模式等'},
   { id: 12, descript: '12.熟悉前端常用的构建工具：熟练掌握Webpack、Vite、Gulp'},
-  { id: 13, descript: '13.AI工具：熟练使用豆包、Deepseek等AI辅助工具'}
+  { id: 13, descript: '13.AI工具：熟练使用豆包、Deepseek、chat等AI辅助工具'},
+  { id: 13, descript: '14.AI编程：Trade、Cursor等AI辅助编程工具'}
 ])
 
 const countData = reactive([
